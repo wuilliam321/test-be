@@ -5,11 +5,16 @@ application up and running.
 
 Things you may want to cover:
 
-* Ruby version
+* Ruby version: `2.4.1`
 
 * System dependencies
+    
+    `bundle install`
 
 * Configuration
+
+    Edit `config/local_env.yml`
+    Edit `config/local_env.test.yml`
 
 * Database creation
 
