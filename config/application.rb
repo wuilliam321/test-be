@@ -28,5 +28,7 @@ module TestBe
         ENV[key.to_s] = value.to_s
       end if File.exists?(local_env_file)
     end
+
+    config.generators.javascript_engine = :js
   end
 end
