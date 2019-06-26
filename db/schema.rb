@@ -10,9 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_26_222053) do
+ActiveRecord::Schema.define(version: 2019_06_26_223820) do
 
   create_table "searches", force: :cascade do |t|
+    t.decimal "lat"
+    t.decimal "lng"
+    t.text "cached_response"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
