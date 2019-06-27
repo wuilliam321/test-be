@@ -1,5 +1,4 @@
-require 'net/http'
-include RemoteApi
+include PedidosYa
 
 class DashboardController < ApplicationController
   def index
