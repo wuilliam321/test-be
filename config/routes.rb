@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  get 'dashboard/index'
+  get 'sessions/login'
 
   resources :searches
   resources :settings
