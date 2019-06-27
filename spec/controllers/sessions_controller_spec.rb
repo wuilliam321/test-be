@@ -9,9 +9,25 @@ RSpec.describe SessionsController, type: :controller do
     end
   end
 
-  describe "GET #login" do
+  describe "GET #new" do
+    [:html, :json].each do |format|
+      it "returns http success #{format}" do
+        get :new
+        expect(response.status).to eq 200
+      end
+    end
+  end
+
+  describe "GET #create" do
     it "returns http success" do
-      get :login
+      get :create
+      expect(response).to have_http_status(:success)
+    end
+  end
+
+  describe "GET #destroy" do
+    it "returns http success" do
+      get :destroy, params: {id: 1}
       expect(response).to have_http_status(:success)
     end
   end
