@@ -33,7 +33,7 @@ RSpec.describe SessionsController, type: :controller do
   describe "GET #new already logged in" do
     [:html].each do |format|
       it "returns http success #{format}" do
-        session[:token] = 'fake_user_token'
+        session[:jwt] = 'fake_user_token'
         get :new, as: format
         expect(response).to have_http_status(:success) if format == :json
         expect(response).to redirect_to(root_url) if format == :html

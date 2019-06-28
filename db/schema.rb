@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 2019_06_27_152957) do
 
   create_table "sessions", force: :cascade do |t|
     t.text "email"
+    t.text "remote_token"
     t.text "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

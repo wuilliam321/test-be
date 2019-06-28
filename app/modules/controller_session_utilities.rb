@@ -1,10 +1,12 @@
 module ControllerSessionUtilities
   def login_user!(email, password)
-    session = Session.find_by(email: email)
+    session = nil
     data = PedidosYa::User.login username: email, password: password
     if data["access_token"]
-      session = session || Session.new
-      session.token = data["access_token"]
+      session = Session.new
+      jwt_token = JsonWebToken.encode(id: session.id)
+      session.remote_token = data["access_token"]
+      session.token = jwt_token
       session.email = email
       session.save
       set_session_token session.token
@@ -16,7 +18,7 @@ module ControllerSessionUtilities
   def set_session_token(token)
     Rails.logger.info('ACCESS_CONTROL') {"Set session token"}
     if defined?(session)
-      session[:token] = token
+      session[:jwt] = token
     end
   end
 
@@ -25,16 +27,26 @@ module ControllerSessionUtilities
     if !defined?(session)
       token = @session.token
     elsif request.format.html?
-      if session[:token]
+      if session[:jwt]
         Rails.logger.info('ACCESS_CONTROL') {"[html] Validating token found in session"}
-        token = session[:token]
+        token = session[:jwt]
       else
         Rails.logger.info('ACCESS_CONTROL') {"[html] No token found in session"}
       end
     elsif request.format.json?
       if request.headers['Authorization']
         Rails.logger.info('ACCESS_CONTROL') {"[json] Validating token found in Authorization header"}
-        token = request.headers['Authorization']
+        header = request.headers['Authorization']
+        header = header.split(' ').last if header
+        begin
+          decoded = JsonWebToken.decode(header)
+          session = Session.find(decoded[:id])
+          token = session.token
+        rescue ActiveRecord::RecordNotFound => e
+          render json: {errors: e.message}, status: :unauthorized
+        rescue JWT::DecodeError => e
+          render json: {errors: e.message}, status: :unauthorized
+        end
       else
         Rails.logger.info('ACCESS_CONTROL') {"[json] No token found"}
       end
@@ -47,8 +59,8 @@ module ControllerSessionUtilities
 
   def remove_session_token
     Rails.logger.info('ACCESS_CONTROL') {"Remove session token"}
-    Session.where({token: session[:token]}).delete_all
-    session[:token] = nil
+    Session.where({token: session[:jwt]}).delete_all
+    session[:jwt] = nil
     @session = nil
   end
 
