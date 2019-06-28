@@ -14,6 +14,7 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 require 'simplecov'
+require 'support/controller_test_helper'
 
 SimpleCov.start do
   add_filter "/config/"
@@ -114,5 +115,9 @@ RSpec.configure do |config|
       DatabaseCleaner.clean
     end
 
+  end
+  RSpec.configure do |config|
+    config.include ControllerTestHelper, type: :controller
+    config.include ControllerTestHelper, type: :model
   end
 end

@@ -1,6 +1,6 @@
 class SessionsController < ApplicationController
 
-  skip_before_action :must_be_authenticated
+  skip_before_action :must_be_authenticated, :only => :new
 
   def index
   end

@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include ControllerTokenUtilities
+  include ControllerSessionUtilities
 
   prepend_before_action :must_be_authenticated
 
