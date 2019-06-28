@@ -16,8 +16,8 @@ RSpec.describe PedidosYa::Base, type: :module do
     expect(conn).to_not be_nil
   end
 
-  it 'should get_token return access_token' do
-    token = PedidosYa::Base.get_token
+  it 'should get_api_token return access_token' do
+    token = PedidosYa::Base.get_api_token
     expect(token).to_not be_nil
   end
 

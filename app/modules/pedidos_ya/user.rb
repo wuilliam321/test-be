@@ -4,6 +4,10 @@ module PedidosYa
       def login(username:, password:)
         self.get("tokens", {userName: username, password: password})
       end
+
+      def check_token
+        self.get("myAccount", {})
+      end
     end
   end
 end

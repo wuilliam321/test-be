@@ -11,7 +11,7 @@ module PedidosYa
         end
       end
 
-      def get_token(client_id: nil, client_secret: nil)
+      def get_api_token(client_id: nil, client_secret: nil)
         if @token.nil?
           path = "tokens"
           query_params = {
@@ -46,7 +46,7 @@ module PedidosYa
         res = api.get do |req|
           req.url path, query
           req.options.timeout = 5
-          req.headers['Authorization'] = self.get_token
+          req.headers['Authorization'] = self.get_api_token
         end
 
         [JSON.parse(res.body), res.status]

@@ -35,4 +35,17 @@ module ControllerTestHelper
         .to_return(status: 200, body: '{"access_token": "fake_user_token"}', headers: {})
 
   end
+
+  def stub_my_account_requests
+    stub_request(:get, "#{ENV['API_REST_URL']}myAccount")
+        .with(
+            headers: {
+                'Accept' => '*/*',
+                'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+                'Authorization' => 'fake_api_token',
+                'User-Agent' => 'Faraday v0.15.4'
+            })
+        .to_return(status: 200, body: '{"id":1,"lastName":"Automation","name":"Test","country":{"id":1}}', headers: {})
+
+  end
 end

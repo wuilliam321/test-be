@@ -2,18 +2,18 @@ module ControllerTokenUtilities
 
   def clear_auth_token
     @auth_token = nil
-    @current_user = nil
+    @session = nil
   end
 
-  def get_current_user
-    @current_user ||= nil
-    unless @current_user
+  def get_current_session
+    @session ||= nil
+    unless @session
       token = get_session_token
       if token
-        @current_user = Session.get_by_token token
+        @session = Session.get_by_token token
       end
     end
-    @current_user
+    @session
   end
 
   def has_valid_auth_token?
