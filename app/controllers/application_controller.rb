@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
     # If user is not authenticated, redirect to login
     # For use in before_actions
     authenticated = false
+    byebug
     if has_valid_auth_token?
       user = get_current_user
       if user

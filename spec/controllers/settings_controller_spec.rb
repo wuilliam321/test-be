@@ -1,9 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe SettingsController, type: :controller do
-  before(:all) do
-    @user = {:email => ENV['TEST_USER'], :password => ENV['TEST_PASSWORD']}
-    login_user!(user: @user)
+  controller do
+    skip_before_action :must_be_authenticated
   end
 
   describe "GET #index" do
