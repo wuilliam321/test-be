@@ -21,7 +21,7 @@ class SessionsController < ApplicationController
     @session = Session.find_by(:email => session_params[:email])
     respond_to do |format|
       format.html {redirect_to dashboard_index_url}
-      format.json {render json: {session: @session, authenticated: false}, status: :ok}
+      format.json {render json: {token: @session.token, authenticated: true}, status: :ok}
     end
   end
 

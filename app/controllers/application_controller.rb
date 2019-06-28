@@ -6,11 +6,12 @@ class ApplicationController < ActionController::Base
 
   helper_method :has_valid_auth_token?
 
+  protect_from_forgery with: :null_session, unless: -> { request.format.json? }
+
   def must_be_authenticated
     # If user is not authenticated, redirect to login
     # For use in before_actions
     authenticated = false
-    byebug
     if has_valid_auth_token?
       user = get_current_user
       if user
