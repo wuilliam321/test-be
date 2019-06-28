@@ -30,6 +30,9 @@ module TestBe
     end
 
     config.generators.javascript_engine = :js
+    config.generators do |g|
+      g.view_specs false
+    end
     config.eager_load_paths << Rails.root.join('app', 'modules')
   end
 end

@@ -4,6 +4,8 @@ class ApplicationController < ActionController::Base
 
   prepend_before_action :must_be_authenticated
 
+  helper_method :has_valid_auth_token?
+
   def must_be_authenticated
     # If user is not authenticated, redirect to login
     # For use in before_actions
@@ -13,12 +15,13 @@ class ApplicationController < ActionController::Base
       if user
         authenticated = true
         Rails.logger.info('ACCESS_CONTROL') { "GRANTED: Authenticated" }
-      else
-        respond_to do |format|
-          format.html { redirect_to login_path }
-          format.json { render json: {:code => "login_required", :error => "Login required"}, status: :forbidden }
-        end
-        Rails.logger.info('ACCESS_CONTROL') { "DENIED: Not authenticated, session token is invalid" }
+      end
+    end
+    unless authenticated
+      Rails.logger.info('ACCESS_CONTROL') { "DENIED: Not authenticated, session token is invalid" }
+      respond_to do |format|
+        format.html { redirect_to login_path }
+        format.json { render json: {:code => "login_required", :error => "Login required"}, status: :forbidden }
       end
     end
     authenticated

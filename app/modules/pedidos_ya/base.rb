@@ -12,18 +12,21 @@ module PedidosYa
       end
 
       def get_token(client_id: nil, client_secret: nil)
-        path = "tokens"
-        query_params = {
-            :clientId => client_id || ENV["CLIENT_ID"],
-            :clientSecret => client_secret || ENV["CLIENT_SECRET"]
-        }
+        if @token.nil?
+          path = "tokens"
+          query_params = {
+              :clientId => client_id || ENV["CLIENT_ID"],
+              :clientSecret => client_secret || ENV["CLIENT_SECRET"]
+          }
 
-        res = api.get do |req|
-          req.url path, query_params
-          req.options.timeout = 5
+          res = api.get do |req|
+            req.url path, query_params
+            req.options.timeout = 5
+          end
+          data = JSON.parse res.body
+          @token = data["access_token"]
         end
-        data = JSON.parse res.body
-        data["access_token"]
+        @token
       end
 
       def get(path, query = {})
