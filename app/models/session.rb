@@ -1,4 +1,6 @@
 class Session < ApplicationRecord
+  has_many :searches
+
   def self.get_by_token(jwt_token)
     Session.find_by(token: jwt_token)
   end

@@ -13,11 +13,14 @@
 ActiveRecord::Schema.define(version: 2019_06_27_152957) do
 
   create_table "searches", force: :cascade do |t|
-    t.decimal "lat"
-    t.decimal "lng"
+    t.text "lat"
+    t.text "lng"
+    t.integer "country"
     t.text "cached_response"
+    t.integer "session_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["session_id"], name: "index_searches_on_session_id"
   end
 
   create_table "sessions", force: :cascade do |t|
