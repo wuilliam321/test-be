@@ -8,7 +8,7 @@ RSpec.describe PedidosYa::Base, type: :module do
     }
     stub_bad_token_requests
     stub_token_requests
-    stub_auth_requests(email: @user[:email], password: @user[:password])
+    stub_auth_requests
   end
 
   it 'should api not be nil' do
@@ -19,11 +19,6 @@ RSpec.describe PedidosYa::Base, type: :module do
   it 'should get_api_token return access_token' do
     token = PedidosYa::Base.get_api_token
     expect(token).to_not be_nil
-  end
-
-  it 'should get return invalid token if no query params provided' do
-    res = PedidosYa::Base.get('tokens')
-    expect(res["code"]).to eq "INVALID_TOKEN"
   end
 
   it 'should api fail if bad api url provided' do

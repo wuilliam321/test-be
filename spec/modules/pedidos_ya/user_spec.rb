@@ -8,7 +8,7 @@ RSpec.describe PedidosYa::User, type: :module do
     }
     stub_bad_token_requests
     stub_token_requests
-    stub_auth_requests(email: @user[:email], password: @user[:password])
+    stub_auth_requests
     stub_my_account_requests
   end
 
@@ -17,8 +17,8 @@ RSpec.describe PedidosYa::User, type: :module do
     expect(conn).to_not be_nil
   end
 
-  it 'should check token return valid token' do
-    token = PedidosYa::User.check_token
+  it 'should user_info return details' do
+    token = PedidosYa::User.user_info 'fake_api_token'
     expect(token).to_not be_nil
   end
 end

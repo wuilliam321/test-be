@@ -1,13 +1,15 @@
 module ControllerSessionUtilities
   def login_user!(email, password)
     session = nil
-    data = PedidosYa::User.login username: email, password: password
-    if data["access_token"]
+    login_data = PedidosYa::User.login username: email, password: password
+    if login_data["access_token"]
+      user_data = PedidosYa::User.user_info login_data["access_token"]
       session = Session.new
       jwt_token = JsonWebToken.encode(id: session.id)
-      session.remote_token = data["access_token"]
+      session.remote_token = login_data["access_token"]
       session.token = jwt_token
       session.email = email
+      session.user_info = user_data.to_json
       session.save
       set_session_token session.token
     end

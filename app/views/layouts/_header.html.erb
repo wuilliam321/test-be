@@ -3,6 +3,7 @@
   <%= link_to("Settings", settings_path) %> |
   <%= link_to("Sessions", sessions_path) %> |
   <% if has_valid_auth_token? %>
+    <%= get_current_user[:name] %> <%= get_current_user[:last_name]  %>
     <%= link_to("Logout", session_path('none'), method: :delete) %>
   <% else %>
     <%= link_to("Login", new_session_path) %>

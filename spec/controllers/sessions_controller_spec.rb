@@ -11,7 +11,7 @@ RSpec.describe SessionsController, type: :controller do
         :password => "123"
     }
     stub_token_requests
-    stub_auth_requests(email: @user[:email], password: @user[:password])
+    stub_auth_requests
   end
 
   describe "GET #index" do

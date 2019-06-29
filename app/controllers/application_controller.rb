@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
 
   prepend_before_action :must_be_authenticated
 
+  helper_method :get_current_user
   helper_method :has_valid_auth_token?
 
   protect_from_forgery with: :null_session, unless: -> {request.format.json?}

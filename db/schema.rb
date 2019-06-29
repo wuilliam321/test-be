@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 2019_06_27_152957) do
     t.text "email"
     t.text "remote_token"
     t.text "token"
+    t.text "user_info"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

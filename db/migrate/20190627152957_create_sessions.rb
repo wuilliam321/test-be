@@ -4,6 +4,7 @@ class CreateSessions < ActiveRecord::Migration[5.2]
       t.text :email
       t.text :remote_token
       t.text :token
+      t.text :user_info
 
       t.timestamps
     end

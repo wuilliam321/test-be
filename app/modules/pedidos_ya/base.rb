@@ -29,8 +29,8 @@ module PedidosYa
         @token
       end
 
-      def get(path, query = {})
-        response, status = get_json(path, query)
+      def get(path, query = {}, token = nil)
+        response, status = get_json(path, query, token)
         status == 200 ? response : errors(response)
       end
 
@@ -39,14 +39,15 @@ module PedidosYa
         response.merge(error)
       end
 
-      def get_json(path, query = {})
+      def get_json(path, query = {}, token = nil)
         # query_string = query.map {|k, v| "#{k}=#{v}"}.join("&")
         # path = query.empty? ? root_path : "#{root_path}?#{query_string}"
 
+        auth_token = token || self.get_api_token
         res = api.get do |req|
           req.url path, query
           req.options.timeout = 5
-          req.headers['Authorization'] = self.get_api_token
+          req.headers['Authorization'] = auth_token
         end
 
         [JSON.parse(res.body), res.status]
