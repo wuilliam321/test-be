@@ -1,2 +1,9 @@
-<h1>Searches#new</h1>
-<p>Find me in app/views/searches/new.html.erb</p>
+<%= render partial: 'search_toolbar' %>
+<h1>Create a Search</h1>
+<%= form_for @search do |f| %>
+  <%= f.label :lat, "Latitude" %>
+  <%= f.text_field :lat %>
+  <%= f.label :lng, "Longitude" %>
+  <%= f.text_field :lng %>
+  <%= f.submit 'Search' %>
+<% end %>

@@ -13,9 +13,9 @@
 ActiveRecord::Schema.define(version: 2019_06_27_152957) do
 
   create_table "searches", force: :cascade do |t|
-    t.text "lat"
-    t.text "lng"
-    t.integer "country"
+    t.text "lat", null: false
+    t.text "lng", null: false
+    t.integer "country", null: false
     t.text "cached_response"
     t.integer "session_id"
     t.datetime "created_at", null: false
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 2019_06_27_152957) do
   end
 
   create_table "sessions", force: :cascade do |t|
-    t.text "email"
+    t.text "email", null: false
     t.text "remote_token"
     t.text "token"
     t.text "user_info"
@@ -33,8 +33,8 @@ ActiveRecord::Schema.define(version: 2019_06_27_152957) do
   end
 
   create_table "settings", force: :cascade do |t|
-    t.text "key"
-    t.text "value"
+    t.text "key", null: false
+    t.text "value", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

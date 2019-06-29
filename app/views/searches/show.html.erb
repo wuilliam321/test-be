@@ -1,2 +1,13 @@
-<h1>Searches#show</h1>
-<p>Find me in app/views/searches/show.html.erb</p>
+<%= render partial: 'search_toolbar' %>
+<h1>Search #<%= @search.id %></h1>
+
+<dl>
+  <dt>Id</dt>
+  <dd><%= @search.id %></dd>
+  <dt>Latitude</dt>
+  <dd><%= @search.lat %></dd>
+  <dt>Longitude</dt>
+  <dd><%= @search.lng %></dd>
+  <dt>Restaurants</dt>
+  <dd>WIP</dd>
+</dl>

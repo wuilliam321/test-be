@@ -1,5 +1,6 @@
 class Session < ApplicationRecord
   has_many :searches
+  validates :email, presence: true
 
   def self.get_by_token(jwt_token)
     Session.find_by(token: jwt_token)

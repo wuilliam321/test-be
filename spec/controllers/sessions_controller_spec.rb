@@ -25,7 +25,7 @@ RSpec.describe SessionsController, type: :controller do
     [:html].each do |format|
       it "returns http success #{format}" do
         get :new, as: format
-        expect(response).to render_template("new")
+        expect(response).to render_template(:new)
       end
     end
   end
