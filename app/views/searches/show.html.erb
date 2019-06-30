@@ -8,6 +8,10 @@
   <dd><%= @search.lat %></dd>
   <dt>Longitude</dt>
   <dd><%= @search.lng %></dd>
-  <dt>Restaurants</dt>
-  <dd>WIP</dd>
+  <dt>Cached Response</dt>
+  <dd>
+    <pre>
+      <%= JSON.pretty_generate(JSON.parse @search.cached_response) unless @search.cached_response.nil? %>
+    </pre>
+  </dd>
 </dl>

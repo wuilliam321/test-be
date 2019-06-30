@@ -5,9 +5,17 @@ RSpec.describe SearchesController, type: :controller do
     skip_before_action :must_be_authenticated
   end
 
+  before(:all) do
+    @search = Search.new(lat: '-34.9158592', lng: '-56.1923705', country: 1, session: Session.last)
+    @search.save
+  end
+
   before(:each) do
+    stub_token_requests
+    stub_restaurants_requests
     login_test_user!
   end
+
 
   describe "GET #index" do
     [:html, :json].each do |format|
@@ -20,10 +28,6 @@ RSpec.describe SearchesController, type: :controller do
   end
 
   describe "GET #show" do
-    before(:all) do
-      @search = Search.new(lat: '-34.9158592', lng: '-56.1923705', country: 1, session: Session.last)
-      @search.save
-    end
 
     [:html, :json].each do |format|
       it "returns http success #{format}" do
@@ -71,5 +75,15 @@ RSpec.describe SearchesController, type: :controller do
       end
     end
   end
+
+    # describe "POST #restaurants" do
+    #   [:html, :json].each do |format|
+    #     it "returns http success #{format}" do
+    #       post :restaurants, params: {id: @search.id}, as: format
+    #       expect(response).to have_http_status(:success) if format == :json
+    #       expect(response).to redirect_to(searches_path) if format == :html
+    #     end
+    #   end
+    # end
 
 end

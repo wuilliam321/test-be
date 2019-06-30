@@ -33,6 +33,6 @@ module TestBe
     config.generators do |g|
       g.view_specs false
     end
-    config.eager_load_paths << Rails.root.join('app', 'modules')
+    config.eager_load_paths << Rails.root.join('app', 'apis')
   end
 end

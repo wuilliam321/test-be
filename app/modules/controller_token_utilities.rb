@@ -1,10 +1,5 @@
 module ControllerTokenUtilities
 
-  def clear_auth_token
-    @auth_token = nil
-    @session = nil
-  end
-
   def get_current_session
     session = nil
     token = get_session_token

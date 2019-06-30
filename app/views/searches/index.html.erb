@@ -19,6 +19,7 @@
       <td><%= search.lng %></td>
       <td>99</td>
       <td><%= link_to("Details", search_path(search.id)) %></td>
+      <td><%= link_to("Run Search", restaurants_search_path(id: search.id), method: :post) %></td>
     </tr>
   <% end %>
   </tbody>

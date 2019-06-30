@@ -1,5 +1,5 @@
 class SearchesController < ApplicationController
-  before_action :set_search, only: [:show]
+  before_action :set_search, only: [:show, :restaurants]
 
   def index
     @searches = Search.all
@@ -12,11 +12,22 @@ class SearchesController < ApplicationController
     @search = Search.new
   end
 
+  def restaurants
+    if run_restaurant_search
+      respond_to do |format|
+        flash[:success] = "Search restaurant called"
+        format.html {redirect_to searches_path(id: @search.id)}
+        format.json {render json: {"message": 'Run search called'}, status: :ok}
+      end
+    end
+  end
+
   def create
     current_session = get_current_session
-    @search = Search.new(search_params.merge(country: current_session.pretty_user_info[:country],
+    country = current_session.pretty_user_info[:country]
+    @search = Search.new(search_params.merge(country: country,
                                              session: current_session))
-    if @search.save
+    if @search.save && run_restaurant_search
       respond_to do |format|
         format.html {redirect_to searches_url}
         format.json {render json: {search: @search}, status: :ok}
@@ -31,10 +42,8 @@ class SearchesController < ApplicationController
     end
   end
 
-  # private
-
   def set_search
-    id = params[:id]
+    id = params[:id] || params[:search_id]
     begin
       @search = Search.find id
     rescue ActiveRecord::RecordNotFound
@@ -44,6 +53,17 @@ class SearchesController < ApplicationController
       end
       return false
     end
+  end
+
+  def run_restaurant_search
+    params = {
+        :country => @search.country,
+        :point => @search.gps_point,
+        :fields => "name,topCategories,ratingScore,logo,deliveryTimeMaxMinutes,link",
+    }
+    res = pedidos_ya_client.restaurant(params: params, token: get_current_session.remote_token)
+    @search.cached_response = res.to_json
+    @search.save
   end
 
   def search_params

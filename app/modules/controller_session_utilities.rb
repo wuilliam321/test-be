@@ -1,17 +1,21 @@
 module ControllerSessionUtilities
   def login_user!(email, password)
+    py_client = pedidos_ya_client
     session = nil
-    login_data = PedidosYa::User.login username: email, password: password
+    login_data = py_client.login email: email, password: password
     if login_data["access_token"]
-      user_data = PedidosYa::User.user_info login_data["access_token"]
       session = Session.new
       jwt_token = JsonWebToken.encode(id: session.id)
+      set_session_token jwt_token
+
       session.remote_token = login_data["access_token"]
       session.token = jwt_token
       session.email = email
+
+      user_data = py_client.user_info token: jwt_token
       session.user_info = user_data.to_json
+
       session.save
-      set_session_token session.token
     end
     @session = session
     session
@@ -61,8 +65,12 @@ module ControllerSessionUtilities
 
   def remove_session_token
     Rails.logger.info('ACCESS_CONTROL') {"Remove session token"}
-    Session.where({token: session[:jwt]}).delete_all
-    session[:jwt] = nil
+    if defined?(current_session) && defined?(session)
+      current_session = Session.find_by({token: session[:jwt]})
+      current_session.update!(token: '')
+
+      session[:jwt] = nil
+    end
     @session = nil
   end
 
