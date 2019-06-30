@@ -16,6 +16,8 @@ ActiveRecord::Schema.define(version: 2019_06_27_152957) do
     t.text "lat", null: false
     t.text "lng", null: false
     t.integer "country", null: false
+    t.integer "max"
+    t.integer "offset"
     t.text "cached_response"
     t.integer "session_id"
     t.datetime "created_at", null: false

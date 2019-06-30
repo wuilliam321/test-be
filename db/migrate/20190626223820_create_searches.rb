@@ -4,6 +4,8 @@ class CreateSearches < ActiveRecord::Migration[5.2]
       t.text :lat, null: false
       t.text :lng, null: false
       t.integer :country, null: false
+      t.integer :max
+      t.integer :offset
       t.text :cached_response
       t.belongs_to :session, foreign_key: true
 

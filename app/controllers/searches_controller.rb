@@ -25,19 +25,31 @@ class SearchesController < ApplicationController
   def create
     current_session = get_current_session
     country = current_session.pretty_user_info[:country]
-    @search = Search.new(search_params.merge(country: country,
-                                             session: current_session))
-    if @search.save && run_restaurant_search
+
+    @search = Search.find_by(search_params)
+    if @search
+      # TODO: && request_expiration.... HER GOES THis validation
+      flash[:success] = "Search already exists, same response will be returned for Time X"
       respond_to do |format|
         format.html {redirect_to searches_url}
         format.json {render :show, status: :ok}
       end
-    else
-      respond_to do |format|
-        flash[:error] = @search.errors.full_messages unless @search.errors.full_messages.empty?
-        flash[:error] = "Error while searching" if @search.errors.full_messages.empty?
-        format.html {redirect_to searches_path}
-        format.json {render json: @search.errors, status: :bad_request}
+    end
+    if @search.nil?
+      @search = Search.new(search_params.merge(country: country,
+                                               session: current_session))
+      if @search.save && run_restaurant_search
+        respond_to do |format|
+          format.html {redirect_to searches_url}
+          format.json {render :show, status: :ok}
+        end
+      else
+        respond_to do |format|
+          flash[:error] = @search.errors.full_messages unless @search.errors.full_messages.empty?
+          flash[:error] = "Error while searching" if @search.errors.full_messages.empty?
+          format.html {redirect_to searches_path}
+          format.json {render json: @search.errors, status: :bad_request}
+        end
       end
     end
   end
@@ -59,8 +71,9 @@ class SearchesController < ApplicationController
     params = {
         :country => @search.country,
         :point => @search.gps_point,
+        :offset => search_params[:offset],
         :fields => "name,topCategories,ratingScore,logo,deliveryTimeMaxMinutes,link,coordinates",
-        :max => 20
+        :max => search_params[:max]
     }
     res = pedidos_ya_client.restaurant(params: params, token: get_current_session.remote_token)
     @search.cached_response = res.to_json
@@ -68,6 +81,6 @@ class SearchesController < ApplicationController
   end
 
   def search_params
-    params.require(:search).permit(:lat, :lng)
+    params.require(:search).permit(:lat, :lng, :max, :offset)
   end
 end

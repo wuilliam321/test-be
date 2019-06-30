@@ -67,7 +67,7 @@ module ControllerSessionUtilities
 
   def remove_session_token
     Rails.logger.info('ACCESS_CONTROL') {"Remove session token"}
-    if defined?(current_session) && defined?(session)
+    if defined?(session) && session[:jwt].present?
       current_session = Session.find_by({token: session[:jwt]})
       current_session.update!(token: '')
 
