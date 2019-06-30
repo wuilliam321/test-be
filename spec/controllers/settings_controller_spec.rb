@@ -5,24 +5,41 @@ RSpec.describe SettingsController, type: :controller do
     skip_before_action :must_be_authenticated
   end
 
-  describe "GET #index" do
-    it "returns http success" do
-      get :index
-      expect(response).to have_http_status(:success)
-    end
+  before(:all) do
+    @setting = Setting.new(key: 'test', value: 'test')
+    @setting.save
+  end
+  before(:each) do
+    login_test_user!
   end
 
-  describe "GET #show" do
-    it "returns http success" do
-      get :show, params: {id: 1}
-      expect(response).to have_http_status(:success)
+  describe "GET #index" do
+    [:html, :json].each do |format|
+      it "returns http success #{format}" do
+        get :index, as: format
+        expect(response).to have_http_status(:success) if format == :json
+        expect(response).to render_template(:index) if format == :html
+      end
     end
   end
 
   describe "GET #edit" do
-    it "returns http success" do
-      get :edit, params: {id: 1}
-      expect(response).to have_http_status(:success)
+    [:html, :json].each do |format|
+      it "returns http success #{format}" do
+        get :edit, params: {id: @setting.id}, as: format
+        expect(response).to have_http_status(:success) if format == :json
+        expect(response).to render_template(:edit) if format == :html
+      end
+    end
+  end
+
+  describe "PUT #update" do
+    [:html, :json].each do |format|
+      it "returns http success #{format}" do
+        put :update, params: {id: @setting.id, setting: @setting.as_json}, as: format
+        expect(response).to have_http_status(:forbidden) if format == :json
+        expect(response).to redirect_to(settings_url) if format == :html
+      end
     end
   end
 

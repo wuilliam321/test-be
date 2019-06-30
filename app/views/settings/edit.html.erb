@@ -1,2 +1,9 @@
-<h1>Settings#edit</h1>
-<p>Find me in app/views/settings/edit.html.erb</p>
+<%= render partial: 'settings_toolbar' %>
+<h1>Edit Setting</h1>
+<%= form_for @setting do |f| %>
+  <span>Key</span>
+  <code><%= @setting.key %></code>
+  <%= f.label :value, "Value" %>
+  <%= f.text_field :value %>
+  <%= f.submit 'Update' %>
+<% end %>

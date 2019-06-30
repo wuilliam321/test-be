@@ -76,14 +76,4 @@ RSpec.describe SearchesController, type: :controller do
     end
   end
 
-    # describe "POST #restaurants" do
-    #   [:html, :json].each do |format|
-    #     it "returns http success #{format}" do
-    #       post :restaurants, params: {id: @search.id}, as: format
-    #       expect(response).to have_http_status(:success) if format == :json
-    #       expect(response).to redirect_to(searches_path) if format == :html
-    #     end
-    #   end
-    # end
-
 end

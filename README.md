@@ -17,8 +17,12 @@ Things you may want to cover:
     Edit `config/local_env.test.yml`
 
 * Database creation
+    
+    `bundle exec rails db:migrate`
 
 * Database initialization
+
+    `bundle exec rails db:seed`
 
 * How to run the test suite
 
