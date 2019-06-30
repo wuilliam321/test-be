@@ -13,7 +13,7 @@ class SearchesController < ApplicationController
   end
 
   def restaurants
-    if run_restaurant_search
+    if run_restaurant_search(@search)
       respond_to do |format|
         flash[:success] = "Search restaurant called"
         format.html {redirect_to searches_path(id: @search.id)}
@@ -26,19 +26,19 @@ class SearchesController < ApplicationController
     current_session = get_current_session
     country = current_session.pretty_user_info[:country]
 
-    @search = Search.find_by(search_params)
-    if @search
-      # TODO: && request_expiration.... HER GOES THis validation
+    @search = Search.where(search_params).last
+    setting = Setting.find_by(key: 'same_request_exp_seconds')
+    exp_time = setting ? setting.value.to_i : 60
+    if @search && (Time.now - @search.created_at).to_i < exp_time
       flash[:success] = "Search already exists, same response will be returned for Time X"
       respond_to do |format|
         format.html {redirect_to searches_url}
         format.json {render :show, status: :ok}
       end
-    end
-    if @search.nil?
+    else
       @search = Search.new(search_params.merge(country: country,
                                                session: current_session))
-      if @search.save && run_restaurant_search
+      if @search.save && run_restaurant_search(@search)
         respond_to do |format|
           format.html {redirect_to searches_url}
           format.json {render :show, status: :ok}
@@ -67,20 +67,20 @@ class SearchesController < ApplicationController
     end
   end
 
-  def run_restaurant_search
+  def run_restaurant_search(search)
     params = {
-        :country => @search.country,
-        :point => @search.gps_point,
+        :country => search.country,
+        :point => search.gps_point,
         :offset => search_params[:offset],
         :fields => "name,topCategories,ratingScore,logo,deliveryTimeMaxMinutes,link,coordinates",
         :max => search_params[:max]
     }
     res = pedidos_ya_client.restaurant(params: params, token: get_current_session.remote_token)
-    @search.cached_response = res.to_json
-    @search.save
+    search.cached_response = res.to_json
+    search.save
   end
 
   def search_params
-    params.require(:search).permit(:lat, :lng, :max, :offset)
+    params.fetch(:search, {}).permit(:lat, :lng, :max, :offset)
   end
 end

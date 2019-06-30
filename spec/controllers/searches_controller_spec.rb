@@ -16,7 +16,6 @@ RSpec.describe SearchesController, type: :controller do
     login_test_user!
   end
 
-
   describe "GET #index" do
     [:html, :json].each do |format|
       it "returns http success #{format}" do
@@ -71,6 +70,43 @@ RSpec.describe SearchesController, type: :controller do
       it "returns http success #{format}" do
         post :create, params: {search: {lat: nil, lng: nil}}, as: format
         expect(response).to have_http_status(400) if format == :json
+        expect(response).to redirect_to(searches_url) if format == :html
+      end
+    end
+  end
+
+  describe "When run_restaurant_search called" do
+    it "returns http success" do
+      result = controller.run_restaurant_search @search
+      expect(result).to be_truthy
+    end
+  end
+
+  describe "POST #create with run_restaurant_search = false" do
+    before(:each) do
+      @search.created_at = Time.now - 600.seconds
+      @search.save
+      allow(controller).to receive(:run_restaurant_search).and_return(false)
+    end
+    [:html, :json].each do |format|
+      it "returns http success #{format}" do
+        post :create, params: {search: {lat: '-34.9158592', lng: '-56.1923705'}}, as: format
+        expect(response).to have_http_status(400) if format == :json
+        expect(response).to redirect_to(searches_url) if format == :html
+      end
+    end
+  end
+
+  describe "POST #create with run_restaurant_search = true" do
+    before(:each) do
+      @search.created_at = Time.now - 600.seconds
+      @search.save
+      allow(controller).to receive(:run_restaurant_search).and_return(true)
+    end
+    [:html, :json].each do |format|
+      it "returns http success #{format}" do
+        post :create, params: {search: {lat: '-34.9158592', lng: '-56.1923705'}}, as: format
+        expect(response).to have_http_status(:success) if format == :json
         expect(response).to redirect_to(searches_url) if format == :html
       end
     end

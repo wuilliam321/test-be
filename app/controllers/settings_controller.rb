@@ -40,6 +40,6 @@ class SettingsController < ApplicationController
   end
 
   def setting_params
-    params.require(:setting).permit(:value)
+    params.fetch(:setting, {}).permit(:value)
   end
 end
