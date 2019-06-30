@@ -30,7 +30,7 @@ class SearchesController < ApplicationController
     if @search.save && run_restaurant_search
       respond_to do |format|
         format.html {redirect_to searches_url}
-        format.json {render json: {search: @search}, status: :ok}
+        format.json {render :show, status: :ok}
       end
     else
       respond_to do |format|
@@ -59,7 +59,8 @@ class SearchesController < ApplicationController
     params = {
         :country => @search.country,
         :point => @search.gps_point,
-        :fields => "name,topCategories,ratingScore,logo,deliveryTimeMaxMinutes,link",
+        :fields => "name,topCategories,ratingScore,logo,deliveryTimeMaxMinutes,link,coordinates",
+        :max => 20
     }
     res = pedidos_ya_client.restaurant(params: params, token: get_current_session.remote_token)
     @search.cached_response = res.to_json

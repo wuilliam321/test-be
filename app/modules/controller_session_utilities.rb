@@ -5,16 +5,17 @@ module ControllerSessionUtilities
     login_data = py_client.login email: email, password: password
     if login_data["access_token"]
       session = Session.new
+      session.remote_token = login_data["access_token"]
+      session.email = email
+      session.save
+
       jwt_token = JsonWebToken.encode(id: session.id)
       set_session_token jwt_token
 
-      session.remote_token = login_data["access_token"]
-      session.token = jwt_token
-      session.email = email
-
-      user_data = py_client.user_info token: jwt_token
+      user_data = py_client.user_info token: login_data["access_token"]
       session.user_info = user_data.to_json
 
+      session.token = jwt_token
       session.save
     end
     @session = session
@@ -25,6 +26,7 @@ module ControllerSessionUtilities
     Rails.logger.info('ACCESS_CONTROL') {"Set session token"}
     if defined?(session)
       session[:jwt] = token
+      request.headers['Authorization'] = token
     end
   end
 
