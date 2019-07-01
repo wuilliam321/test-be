@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include ControllerTokenUtilities
   include ControllerSessionUtilities
+  include PedidosYaAPI
 
   prepend_before_action :must_be_authenticated
 

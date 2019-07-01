@@ -36,7 +36,7 @@ RSpec.describe SessionsController, type: :controller do
         session[:jwt] = 'fake_user_token'
         get :new, as: format
         expect(response).to have_http_status(:success) if format == :json
-        expect(response).to redirect_to(root_url) if format == :html
+        expect(response).to render_template(:new) if format == :html
       end
     end
   end

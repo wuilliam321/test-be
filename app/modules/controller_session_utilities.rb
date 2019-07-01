@@ -35,9 +35,17 @@ module ControllerSessionUtilities
     if !defined?(session)
       token = @session.token
     elsif request.format.html?
-      if session[:jwt]
+      if !session.nil? && session[:jwt]
         Rails.logger.info('ACCESS_CONTROL') {"[html] Validating token found in session"}
-        token = session[:jwt]
+        header = session[:jwt]
+        begin
+          decoded = JsonWebToken.decode(header)
+          current_session = Session.find(decoded[:id])
+          token = current_session.token
+        rescue
+          remove_session_token
+          token = nil
+        end
       else
         Rails.logger.info('ACCESS_CONTROL') {"[html] No token found in session"}
       end
@@ -48,8 +56,8 @@ module ControllerSessionUtilities
         header = header.split(' ').last if header
         begin
           decoded = JsonWebToken.decode(header)
-          session = Session.find(decoded[:id])
-          token = session.token
+          current_session = Session.find(decoded[:id])
+          token = current_session.token
         rescue ActiveRecord::RecordNotFound => e
           render json: {errors: e.message}, status: :unauthorized
         rescue JWT::DecodeError => e
@@ -68,10 +76,10 @@ module ControllerSessionUtilities
   def remove_session_token
     Rails.logger.info('ACCESS_CONTROL') {"Remove session token"}
     if defined?(session) && session[:jwt].present?
-      current_session = Session.find_by({token: session[:jwt]})
-      current_session.update!(token: '')
-
       session[:jwt] = nil
+
+      current_session = Session.find_by({token: session[:jwt]})
+      current_session.update!(token: '') if current_session
     end
     @session = nil
   end

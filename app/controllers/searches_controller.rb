@@ -85,14 +85,19 @@ class SearchesController < ApplicationController
         :fields => "id,name,topCategories,ratingScore,logo,deliveryTimeMaxMinutes,link,coordinates,opened",
         :max => search_params[:max]
     }
-    res = pedidos_ya_client.restaurant(params: params, token: get_current_session.remote_token)
-    if res["code"] == "INVALID_POINT"
-      raise ActionController::BadRequest.new, "INVALID_CODE"
+    begin
+      res = pedidos_ya_client.restaurant(params: params, token: get_current_session.remote_token)
+    rescue => e
+      respond_to do |format|
+        flash[:error] = "Error while running search: Remote Server Error: #{e.message}"
+        format.html {redirect_to searches_path}
+        format.json {render json: e.message, status: :bad_request}
+      end
+      return false
     end
-    # Filtering opened sort by rating last 20 of the total obtained
     new_data = res["data"]
-                 .select {|d| d["opened"] == 1}
-                 .sort {|d| -d["ratingScore"].to_f}
+                   .select {|d| d["opened"] == 1}
+                   .sort {|d| -d["ratingScore"].to_f}
     min = search_params[:offset] || 0
     max = search_params[:max] || 20
     res["data"] = new_data[min..(max - 1)]

@@ -88,7 +88,7 @@ RSpec.describe SearchesController, type: :controller do
     before(:each) do
       @search.created_at = Time.now - 600.seconds
       @search.save
-      allow(controller).to receive(:run_restaurant_search).and_return(false)
+      allow(controller).to receive(:run_restaurant_search).and_raise(404)
     end
     [:html, :json].each do |format|
       it "returns http success #{format}" do
