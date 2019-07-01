@@ -2,7 +2,7 @@ class SearchesController < ApplicationController
   before_action :set_search, only: [:show, :restaurants]
 
   def index
-    @searches = Search.all
+    @searches = Search.all.reverse
   end
 
   def show
@@ -82,13 +82,20 @@ class SearchesController < ApplicationController
         :country => search.country,
         :point => search.gps_point,
         :offset => search_params[:offset],
-        :fields => "id,name,topCategories,ratingScore,logo,deliveryTimeMaxMinutes,link,coordinates",
+        :fields => "id,name,topCategories,ratingScore,logo,deliveryTimeMaxMinutes,link,coordinates,opened",
         :max => search_params[:max]
     }
     res = pedidos_ya_client.restaurant(params: params, token: get_current_session.remote_token)
     if res["code"] == "INVALID_POINT"
       raise ActionController::BadRequest.new, "INVALID_CODE"
     end
+    # Filtering opened sort by rating last 20 of the total obtained
+    new_data = res["data"]
+                 .select {|d| d["opened"] == 1}
+                 .sort {|d| -d["ratingScore"].to_f}
+    min = search_params[:offset] || 0
+    max = search_params[:max] || 20
+    res["data"] = new_data[min..(max - 1)]
     search.cached_response = res.to_json
     search.save
   end
