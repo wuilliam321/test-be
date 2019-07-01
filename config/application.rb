@@ -34,5 +34,12 @@ module TestBe
       g.view_specs false
     end
     config.eager_load_paths << Rails.root.join('app', 'apis')
+
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*'
+        resource '*', :headers => :any, :methods => [:get, :delete, :put, :post, :options]
+      end
+    end
   end
 end

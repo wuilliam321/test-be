@@ -6,7 +6,9 @@ RSpec.describe SearchesController, type: :controller do
   end
 
   before(:all) do
-    @search = Search.new(lat: '-34.9158592', lng: '-56.1923705', country: 1, session: Session.last)
+    session = Session.new(email: 'test@gmail.com', token: '123', user_info: '{country => 1}')
+    session.save
+    @search = Search.new(lat: '-34.9158592', lng: '-56.1923705', country: 1, session: session)
     @search.save
   end
 
@@ -111,5 +113,9 @@ RSpec.describe SearchesController, type: :controller do
       end
     end
   end
+
+  # it 'should fail when using bad point as request' do
+  #
+  # end
 
 end

@@ -30,6 +30,7 @@ class SearchesController < ApplicationController
     setting = Setting.find_by(key: 'same_request_exp_seconds')
     exp_time = setting ? setting.value.to_i : 60
     if @search && (Time.now - @search.created_at).to_i < exp_time
+      Rails.logger.info('SEARCHES') {"Reusing cached search query"}
       flash[:success] = "Search already exists, same response will be returned for Time X"
       respond_to do |format|
         format.html {redirect_to searches_url}
@@ -38,10 +39,19 @@ class SearchesController < ApplicationController
     else
       @search = Search.new(search_params.merge(country: country,
                                                session: current_session))
-      if @search.save && run_restaurant_search(@search)
-        respond_to do |format|
-          format.html {redirect_to searches_url}
-          format.json {render :show, status: :ok}
+      condition = @search.save
+      if condition
+        begin
+          run_restaurant_search(@search)
+          respond_to do |format|
+            format.html {redirect_to searches_url}
+            format.json {render :show, status: :ok}
+          end
+        rescue => e
+          respond_to do |format|
+            format.html {redirect_to searches_path}
+            format.json {render json: e.message, status: :bad_request}
+          end
         end
       else
         respond_to do |format|
@@ -72,10 +82,13 @@ class SearchesController < ApplicationController
         :country => search.country,
         :point => search.gps_point,
         :offset => search_params[:offset],
-        :fields => "name,topCategories,ratingScore,logo,deliveryTimeMaxMinutes,link,coordinates",
+        :fields => "id,name,topCategories,ratingScore,logo,deliveryTimeMaxMinutes,link,coordinates",
         :max => search_params[:max]
     }
     res = pedidos_ya_client.restaurant(params: params, token: get_current_session.remote_token)
+    if res["code"] == "INVALID_POINT"
+      raise ActionController::BadRequest.new, "INVALID_CODE"
+    end
     search.cached_response = res.to_json
     search.save
   end

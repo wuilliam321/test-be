@@ -28,6 +28,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'webmock', require: false
 gem 'jwt'
 gem 'bcrypt', '~> 3.1.7'
+gem 'rack-cors'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
