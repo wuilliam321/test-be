@@ -97,7 +97,7 @@ class SearchesController < ApplicationController
     end
     new_data = res["data"]
                    .select {|d| d["opened"] == 1}
-                   .sort {|d| -d["ratingScore"].to_f}
+                   .sort_by {|d| -d["ratingScore"].to_f}
     min = search_params[:offset] || 0
     max = search_params[:max] || 20
     res["data"] = new_data[min..(max - 1)]

@@ -20,14 +20,15 @@ class ApplicationController < ActionController::Base
     # For use in before_actions
     authenticated = false
     if has_valid_auth_token?
-      session = get_current_session
-      if session
+      current_session = get_current_session
+      if current_session
         authenticated = true
         Rails.logger.info('ACCESS_CONTROL') {"GRANTED: Authenticated"}
       end
     end
     unless authenticated
       Rails.logger.info('ACCESS_CONTROL') {"DENIED: Not authenticated, session token is invalid"}
+      session[:jwt] = nil
       respond_to do |format|
         format.html {redirect_to new_session_path}
         format.json {render json: {:code => "login_required", :error => "Login required"}, status: :forbidden}

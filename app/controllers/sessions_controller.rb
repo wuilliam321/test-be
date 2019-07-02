@@ -19,8 +19,10 @@ class SessionsController < ApplicationController
     login_user!(session_params[:email], session_params[:password])
     @session = Session.find_by(:email => session_params[:email])
     respond_to do |format|
+      user_info = JSON.parse @session.user_info
+      user_info["country"] = user_info["country"]["id"]
       format.html {redirect_to dashboard_index_url}
-      format.json {render json: {token: @session.token, authenticated: true}, status: :ok}
+      format.json {render json: {token: @session.token, user_info: user_info, authenticated: true}, status: :ok}
     end
   end
 
